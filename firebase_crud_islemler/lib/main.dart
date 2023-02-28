@@ -15,45 +15,36 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: FutureBuilder(
-          future: _initialization,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(child: Text('Beklenilmeyen bir hata oluştu.'));
-            } else if (snapshot.hasData) {
-              return MyHomePage();
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }),
+        future: _initialization,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Beklenilmeyen bir hata oluştu.'));
+          } else if (snapshot.hasData) {
+            return MyHomePage();
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+      routes: {
+        '/koleksiyon-dinleme': (_) => KoleksiyonDinleme(),
+        '/dokuman-dinleme': (_) => DokumanDinleme(),
+        '/veri-ekleme': (_) => VeriEkleme(),
+        '/veri-silme': (_) => VeriSilme(),
+        '/veri-guncelleme': (_) => VeriGuncelleme(),
+        '/veri-okuma': (_) => VeriOkuma(),
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final MyCards = <Mycard, Route<dynamic>>{
-    Mycard(
-      Icons.hearing,
-      'Koleksiyon Dinleme',
-      true,
-    ): MaterialPageRoute(builder: (_) => KoleksiyonDinleme()),
-    Mycard(Icons.document_scanner, 'Doküman Dinleme', false):
-    MaterialPageRoute(builder: (_) => DokumanDinleme()),
-    Mycard(Icons.add, 'Veri Ekleme', false):
-    MaterialPageRoute(builder: (_) => VeriEkleme()),
-    Mycard(Icons.delete, 'Veri Silme', false):
-    MaterialPageRoute(builder: (_) => VeriSilme()),
-    Mycard(Icons.update, 'Veri Güncelemme', false):
-    MaterialPageRoute(builder: (_) => VeriGunceleme()),
-    Mycard(Icons.chrome_reader_mode, 'Veri Okuma', false):
-    MaterialPageRoute(builder: (_) => VeriOkuma()),
-  };
+  final List<Mycard> myCards = [    Mycard(Icons.hearing, 'Koleksiyon Dinleme', true),    Mycard(Icons.document_scanner, 'Dokuman Dinleme', false),    Mycard(Icons.add, 'Veri Ekleme', false),    Mycard(Icons.delete, 'Veri Silme', false),    Mycard(Icons.update, 'Veri Guncelleme', false),    Mycard(Icons.chrome_reader_mode, 'Veri Okuma', false),  ];
 
   @override
   Widget build(BuildContext context) {
@@ -75,48 +66,46 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                children: MyCards.keys
-                    .map(
-                      (e) => InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MyCards[e]!,
-                      );
-                    },
-                    child: Card(
-                      color: e.isActive ? Colors.deepPurple : null,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
+            child: ListView.builder(
+              itemCount: myCards.length,
+              itemBuilder: (context, index) {
+                final myCard = myCards[index];
+                return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/${myCard.title.toLowerCase().replaceAll(' ', '-')}',
+                    );
+                  },
+                  child: Card(
+                    color: myCard.isActive ? Colors.deepPurple : null,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
                           Icon(
-                            e.icon,
+                            myCard.icon,
                             size: 50,
-                            color: e.isActive
+                            color: myCard.isActive
                                 ? Colors.white
                                 : Colors.deepPurple,
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(width: 16),
                           Text(
-                            e.title,
+                            myCard.title,
                             style: TextStyle(
-                              color:
-                              e.isActive ? Colors.white : Colors.grey,
+                              color: myCard.isActive
+                                  ? Colors.white
+                                  : Colors.grey,
+                              fontSize: 24,
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                )
-                    .toList(),
-              ),
+                );
+              },
             ),
           ),
         ],
