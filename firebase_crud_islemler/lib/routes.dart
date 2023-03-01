@@ -51,11 +51,14 @@ class KoleksiyonDinleme extends StatelessWidget {
               }
             },
           ),
-          ElevatedButton(
-              child: Text('Geri Dön'),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: ElevatedButton(
+                child: Text('Geri Dön'),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ),
         ]),
       )),
     );
@@ -140,7 +143,7 @@ class VeriEkleme extends StatelessWidget {
               },
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 100),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 120),
               child: Form(child: Column(children: [
                 TextFormField(
                   controller: nameController,
@@ -331,11 +334,14 @@ class VeriGuncelleme extends StatelessWidget {
                   }
                 },
               ),
-              ElevatedButton(
-                child: Text('Geri Dön'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+              Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: ElevatedButton(
+                  child: Text('Geri Dön'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
               ),
             ],
           ),
@@ -400,11 +406,14 @@ class VeriOkuma extends StatelessWidget {
                 }
               },
             ),
-            ElevatedButton(
-                child: Text('Geri Dön'),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: ElevatedButton(
+                  child: Text('Geri Dön'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+            ),
           ])),
     );
   }
