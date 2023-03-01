@@ -72,6 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 final myCard = myCards[index];
                 return InkWell(
                   onTap: () {
+                    setState(() {
+                      for(int i = 0; i<myCards.length; i++){
+                        myCards[i].isActive =false;
+                      }
+                      myCards[index].isActive =true;
+                    });
+
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.pushNamed(
                       context,
                       '/${myCard.title.toLowerCase().replaceAll(' ', '-')}',

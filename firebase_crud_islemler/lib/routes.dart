@@ -38,14 +38,6 @@ class KoleksiyonDinleme extends StatelessWidget {
                             subtitle: Text(
                                 '${listOfDocumentSnap[index].get('age')}',
                                 style: TextStyle(fontSize: 24)),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () async {
-                                await listOfDocumentSnap[index]
-                                    .reference
-                                    .delete();
-                              },
-                            ),
                           ),
                         );
                       },
@@ -77,20 +69,24 @@ class DokumanDinleme extends StatelessWidget {
       backgroundColor: Colors.pink,
       appBar: AppBar(title: Text('Koleksiyon Dinleme')),
       body: Center(
-          child: Container(
-            width: 400,
-            height: 400,
-            child: Column(children: [
-
-              StreamBuilder<DocumentSnapshot>(
+          child: Column(children: [
+            Expanded(
+              child: StreamBuilder<DocumentSnapshot>(
                 stream: ahmet.snapshots(),
-                builder: (BuildContext context, AsyncSnapshot asyncSnapshot) {
-                 return    Text('${asyncSnapshot.data.data()}',
-                 style: TextStyle(fontSize: 20));
-                 },
-             ),
-            ]
+                builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> asyncSnapshot) {
+                  if (asyncSnapshot.hasData && asyncSnapshot.data != null && asyncSnapshot.data!.data() != null) {
+                    return Text('${asyncSnapshot.data!.data()}',
+                        style: TextStyle(fontSize: 20));
+                  } else if (asyncSnapshot.hasError) {
+                    return Text('Error: ${asyncSnapshot.error}');
+                  } else {
+                    return Text('Loading...',
+                        style: TextStyle(fontSize: 20));
+                  }
+                },
+              ),
             ),
+          ]
           ),
       ),
     );
@@ -103,82 +99,75 @@ class VeriEkleme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.grey,
-        appBar: AppBar(title: Text('Firestore CRUD İşlemleri')),
-        body: Center(
-          child: Container(
-            child: Column(
-              children: [
-                StreamBuilder<QuerySnapshot>(
-                  // Neyi dinledimiz bilgisi
-                  stream: users.snapshots(),
-                  //Streamden her yen veri aktığında çalışıcak
-                  builder:  (BuildContext context , AsyncSnapshot asyncSnapshot){
+    return Scaffold(
+      backgroundColor: Colors.grey,
+      appBar: AppBar(title: Text('Firestore CRUD İşlemleri')),
+      body: Center(
+        child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            StreamBuilder<QuerySnapshot>(
+              // Neyi dinledimiz bilgisi
+              stream: users.snapshots(),
+              //Streamden her yen veri aktığında çalışıcak
+              builder:  (BuildContext context , AsyncSnapshot asyncSnapshot){
 
-                    if(asyncSnapshot.hasError){
-                      return Center(child: Text('Bir hata oluştu tekrar deneyiniz'),);
-                    }
-                    else{
-                      if(asyncSnapshot.hasData){
-                        List<DocumentSnapshot> listOfDocumentSnap =asyncSnapshot.data.docs;
-                        return Flexible(
-                          child: ListView.builder(
-                            itemCount: listOfDocumentSnap.length,
-                            itemBuilder: (context,index){
-                              return Card(
-                                child: ListTile(
-                                  title:  Text('${listOfDocumentSnap[index].get('name')}',
-                                      style: TextStyle(fontSize: 24)),
-                                  subtitle:  Text('${listOfDocumentSnap[index].get('age')}',
-                                      style: TextStyle(fontSize: 24)),
-                                  trailing: IconButton(icon: Icon(Icons.delete),
-                                    onPressed: () async {
-                                      await listOfDocumentSnap[index].reference.delete();
-                                    },),
-                                ),
-                              );
+                if(asyncSnapshot.hasError){
+                  return Center(child: Text('Bir hata oluştu tekrar deneyiniz'),);
+                }
+                else{
+                  if(asyncSnapshot.hasData){
+                    List<DocumentSnapshot> listOfDocumentSnap =asyncSnapshot.data.docs;
+                    return Flexible(
+                      child: ListView.builder(
+                        itemCount: listOfDocumentSnap.length,
+                        itemBuilder: (context,index){
+                          return Card(
+                            child: ListTile(
+                              title:  Text('${listOfDocumentSnap[index].get('name')}',
+                                  style: TextStyle(fontSize: 24)),
+                              subtitle:  Text('${listOfDocumentSnap[index].get('age')}',
+                                  style: TextStyle(fontSize: 24)),
+                            ),
+                          );
 
-                            },),
-                        );
-                      }else{
-                        return Center(child: CircularProgressIndicator(),);
-                      }
-                    }
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 200),
-                  child: Form(child: Column(children: [
-                    TextFormField(
-                      controller: nameController,
-                      decoration: InputDecoration(hintText: 'isim Giriniz'),
-                    ),
-                    TextFormField(
-                      controller: ageController,
-                      decoration: InputDecoration(hintText: 'yaş Giriniz'),
-                    ),
-                  ],)),
-                )
-              ],
+                        },),
+                    );
+                  }else{
+                    return Center(child: CircularProgressIndicator(),);
+                  }
+                }
+              },
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 100),
+              child: Form(child: Column(children: [
+                TextFormField(
+                  controller: nameController,
+                  decoration: InputDecoration(hintText: 'isim Giriniz'),
+                ),
+                TextFormField(
+                  controller: ageController,
+                  decoration: InputDecoration(hintText: 'yaş Giriniz'),
+                ),
+              ],)),
+            )
+          ],
         ),
-        floatingActionButton: FloatingActionButton(child: Text('Ekle'), onPressed: () async {
-          print(nameController.text);
-          print(ageController.text);
-          ///Text alanlarındaki veriden bir map oluşturukması
-          Map<String, dynamic> userData = {
-            'name': nameController.text,
-            'age': ageController.text
-          };
-          ///Veriyi yazmak istediğimiz referansa ulaşacağız ve ildili metodu çağıracağız
-          await users.doc(nameController.text).set(userData);
-
-
-        },),
       ),
+      floatingActionButton: FloatingActionButton(child: Text('Ekle'), onPressed: () async {
+        print(nameController.text);
+        print(ageController.text);
+        ///Text alanlarındaki veriden bir map oluşturukması
+        Map<String, dynamic> userData = {
+          'name': nameController.text,
+          'age': ageController.text
+        };
+        ///Veriyi yazmak istediğimiz referansa ulaşacağız ve ildili metodu çağıracağız
+        await users.doc(nameController.text).set(userData);
+
+
+      },),
     );
   }
 }
@@ -190,58 +179,60 @@ class VeriSilme extends StatelessWidget {
       backgroundColor: Colors.pink,
       appBar: AppBar(title: Text('Veri Silme')),
       body: Center(
-          child: Container(
-            child: Column(children: [
-              StreamBuilder<QuerySnapshot>(
-                stream: users.snapshots(),
-                builder: (BuildContext context, AsyncSnapshot asyncSnapshot) {
-                  if (asyncSnapshot.hasError) {
-                    return Center(
-                      child: Text('Bir hata oluştu tekrar deneyiniz'),
-                    );
-                  } else {
-                    if (asyncSnapshot.hasData) {
-                      List<DocumentSnapshot> listOfDocumentSnap =
-                          asyncSnapshot.data.docs;
-                      return Flexible(
-                        child: ListView.builder(
-                          itemCount: listOfDocumentSnap.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              child: ListTile(
-                                title: Text(
-                                    '${listOfDocumentSnap[index].get('name')}',
-                                    style: TextStyle(fontSize: 24)),
-                                subtitle: Text(
-                                    '${listOfDocumentSnap[index].get('age')}',
-                                    style: TextStyle(fontSize: 24)),
-                                trailing: IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () async {
-                                    await listOfDocumentSnap[index]
-                                        .reference
-                                        .delete();
-                                  },
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+          child: Expanded(
+            child: Container(
+              child: Column(children: [
+                StreamBuilder<QuerySnapshot>(
+                  stream: users.snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot asyncSnapshot) {
+                    if (asyncSnapshot.hasError) {
+                      return Center(
+                        child: Text('Bir hata oluştu tekrar deneyiniz'),
                       );
                     } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      if (asyncSnapshot.hasData) {
+                        List<DocumentSnapshot> listOfDocumentSnap =
+                            asyncSnapshot.data.docs;
+                        return Flexible(
+                          child: ListView.builder(
+                            itemCount: listOfDocumentSnap.length,
+                            itemBuilder: (context, index) {
+                              return Card(
+                                child: ListTile(
+                                  title: Text(
+                                      '${listOfDocumentSnap[index].get('name')}',
+                                      style: TextStyle(fontSize: 24)),
+                                  subtitle: Text(
+                                      '${listOfDocumentSnap[index].get('age')}',
+                                      style: TextStyle(fontSize: 24)),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () async {
+                                      await listOfDocumentSnap[index]
+                                          .reference
+                                          .delete();
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
                     }
-                  }
-                },
-              ),
-              ElevatedButton(
-                  child: Text('Geri Dön'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-            ]),
+                  },
+                ),
+                ElevatedButton(
+                    child: Text('Geri Dön'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+              ]),
+            ),
           )),
     );
   }
@@ -276,7 +267,7 @@ class VeriGuncelleme extends StatelessWidget {
                   else{
                     if(asyncSnapshot.hasData){
                       List<DocumentSnapshot> listOfDocumentSnap =asyncSnapshot.data.docs;
-                      return Flexible(
+                      return Expanded(
                         child: ListView.builder(
                           itemCount: listOfDocumentSnap.length,
                           itemBuilder: (context,index){
@@ -286,10 +277,6 @@ class VeriGuncelleme extends StatelessWidget {
                                     style: TextStyle(fontSize: 24)),
                                 subtitle:  Text('${listOfDocumentSnap[index].get('age')}',
                                     style: TextStyle(fontSize: 24)),
-                                trailing: IconButton(icon: Icon(Icons.delete),
-                                  onPressed: () async {
-                                    await listOfDocumentSnap[index].reference.delete();
-                                  },),
                               ),
                             );
 
@@ -301,7 +288,7 @@ class VeriGuncelleme extends StatelessWidget {
                   }
                 },
               ),
-              Card(child: Text('Yaşını güncellemek istediğiniz kullanıcının ismini giriniz ve artından değiştirmek istediğiniz yaşı', style: TextStyle(fontSize: 23),)),
+              Card(color: Colors.pink, child: Text('Yaşını güncellemek istediğiniz kullanıcının ismini giriniz ve artından değiştirmek istediğiniz yaşı', style: TextStyle(fontSize: 23),textAlign:TextAlign.center,)),
               TextFormField(
                 controller: nameController,
                 decoration: InputDecoration(
@@ -359,7 +346,10 @@ class VeriGuncelleme extends StatelessWidget {
 }
 
 
+
 class VeriOkuma extends StatelessWidget {
+  final CollectionReference users = crudoperations().firestore.collection('Users');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -383,16 +373,22 @@ class VeriOkuma extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: listOfDocumentSnap.length,
                         itemBuilder: (context,index){
+                          String name = listOfDocumentSnap[index].get('name');
+                          String age = listOfDocumentSnap[index].get('age');
                           return Card(
                             child: ListTile(
-                              title:  Text('${listOfDocumentSnap[index].get('name')}',
-                                  style: TextStyle(fontSize: 24)),
-                              subtitle:  Text('${listOfDocumentSnap[index].get('age')}',
-                                  style: TextStyle(fontSize: 24)),
-                              trailing: IconButton(icon: Icon(Icons.delete),
-                                onPressed: () async {
-                                  await listOfDocumentSnap[index].reference.delete();
-                                },),
+                              title:  Text('$name', style: TextStyle(fontSize: 24)),
+                              subtitle:  Text('$age', style: TextStyle(fontSize: 24)),
+                              trailing: ElevatedButton(
+                                child: Text('Read Data'),
+                                onPressed: () {
+                                  // navigate to a new page to display user details
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => UserDetail(name: name, age: age)),
+                                  );
+                                },
+                              ),
                             ),
                           );
 
@@ -404,12 +400,36 @@ class VeriOkuma extends StatelessWidget {
                 }
               },
             ),
-        ElevatedButton(
-            child: Text('Geri Dön'),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
-      ])),
+            ElevatedButton(
+                child: Text('Geri Dön'),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+          ])),
+    );
+  }
+}
+
+class UserDetail extends StatelessWidget {
+  final String name;
+  final String age;
+
+  UserDetail({required this.name, required this.age});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('$name')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Name: $name', style: TextStyle(fontSize: 24)),
+            SizedBox(height: 10),
+            Text('Age: $age', style: TextStyle(fontSize: 24)),
+          ],
+        ),
+      ),
     );
   }
 }
