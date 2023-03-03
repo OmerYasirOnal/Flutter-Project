@@ -374,13 +374,14 @@ class VeriOkuma extends StatelessWidget {
                 }
                 else{
                   if(asyncSnapshot.hasData){
-                    List<DocumentSnapshot> listOfDocumentSnap =asyncSnapshot.data.docs;
+                    List<DocumentSnapshot> listOfDocumentSnap = asyncSnapshot.data.docs;
                     return Flexible(
                       child: ListView.builder(
                         itemCount: listOfDocumentSnap.length,
                         itemBuilder: (context,index){
                           String name = listOfDocumentSnap[index].get('name');
                           String age = listOfDocumentSnap[index].get('age');
+                          String school = listOfDocumentSnap[index].get('school');
                           return Card(
                             child: ListTile(
                               title:  Text('$name', style: TextStyle(fontSize: 24)),
@@ -391,7 +392,7 @@ class VeriOkuma extends StatelessWidget {
                                   // navigate to a new page to display user details
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => UserDetail(name: name, age: age)),
+                                    MaterialPageRoute(builder: (context) => UserDetail(name: name, age: age,school: school)),
                                   );
                                 },
                               ),
@@ -422,8 +423,9 @@ class VeriOkuma extends StatelessWidget {
 class UserDetail extends StatelessWidget {
   final String name;
   final String age;
+  final String school;
 
-  UserDetail({required this.name, required this.age});
+  UserDetail({required this.name, required this.age,required this.school });
 
   @override
   Widget build(BuildContext context) {
@@ -436,6 +438,8 @@ class UserDetail extends StatelessWidget {
             Text('Name: $name', style: TextStyle(fontSize: 24)),
             SizedBox(height: 10),
             Text('Age: $age', style: TextStyle(fontSize: 24)),
+            SizedBox(height: 10),
+            Text('School: $school', style: TextStyle(fontSize: 24))
           ],
         ),
       ),
