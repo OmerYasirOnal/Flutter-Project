@@ -23,7 +23,7 @@ class welcomePageWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            'Hoş Geldiniz!',
+            'Hoş Geldiniz',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -51,7 +51,7 @@ class welcomePageWidget extends StatelessWidget {
               email,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 15,
                 color: Colors.black,
               ),
             ),
