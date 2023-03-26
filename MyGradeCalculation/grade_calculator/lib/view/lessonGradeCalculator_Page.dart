@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../calculation/calculateTotalGrade.dart';
-import '../myWidgets/lessonGradeCalculatorPageWidgets/myGradesAverageWidget.dart';
+import '../constants/constants.dart';
 import '../myWidgets/lessonGradeCalculatorPageWidgets/myRecordButtonWidget.dart';
 import '../myWidgets/lessonGradeCalculatorPageWidgets/myStatWidget.dart';
 import 'calculation_page.dart';
@@ -58,6 +58,7 @@ class _LessonGradeCalculatorState extends State<LessonGradeCalculator> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   double _average = 0.0;
+
   int numberOfLessons = 1;
   List<LessonGrade> lessonGrades = [LessonGrade('', 0.0)];
 
@@ -71,6 +72,8 @@ class _LessonGradeCalculatorState extends State<LessonGradeCalculator> {
 
   @override
   Widget build(BuildContext context) {
+    _average =
+        _calculateTotal.calculateAverageOfGrade(numberOfLessons, lessonGrades);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ders Notunu Hesaplama'),
@@ -155,13 +158,6 @@ class _LessonGradeCalculatorState extends State<LessonGradeCalculator> {
                   final letterGrade = _calculateTotal.getLetterGrade(grade!);
                   final score = _calculateTotal.getScore(letterGrade);
                   final status = _calculateTotal.getStatus(letterGrade);
-                  if (lessonGrades == 1) {
-                    _average = _calculateTotal.calculateAverageOfGrade(
-                        numberOfLessons, lessonGrades);
-                  } else {
-                    _average = lessonGrades[0].grade!;
-                  }
-                  ;
 
                   return Row(
                     children: [
@@ -182,7 +178,27 @@ class _LessonGradeCalculatorState extends State<LessonGradeCalculator> {
                 },
               ),
             ),
-            myGradesAverageWidget(average: _average),
+            Center(
+              child: Container(
+                margin: EdgeInsets.all(10),
+                alignment: Alignment.center,
+                width: double.infinity,
+                decoration: MyBoxDecoration(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Dönem Ortalaman: ',
+                      style: TextStyle(fontSize: 25.0),
+                    ),
+                    Text(
+                      '$_average',
+                      style: const TextStyle(fontSize: 25.0),
+                    )
+                  ],
+                ),
+              ),
+            ),
             myRecordButtonWidget(
                 uid: uid, selectedTerm: _selectedTerm, average: _average),
           ],

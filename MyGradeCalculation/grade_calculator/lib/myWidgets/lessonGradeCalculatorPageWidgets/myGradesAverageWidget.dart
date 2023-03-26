@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../constants/constants.dart';
 
 class myGradesAverageWidget extends StatelessWidget {
-  const myGradesAverageWidget({
+  myGradesAverageWidget({
     super.key,
     required double average,
   }) : _average = average;
@@ -14,7 +14,7 @@ class myGradesAverageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        margin: const EdgeInsets.all(10),
+        margin: EdgeInsets.all(10),
         alignment: Alignment.center,
         width: double.infinity,
         decoration: MyBoxDecoration(),

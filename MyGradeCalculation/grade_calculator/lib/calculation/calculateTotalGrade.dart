@@ -45,14 +45,11 @@ class CalculateTotal {
 
   double calculateAverageOfGrade(numberOfLessons, lessonGrades) {
     double sum = 0;
-    if (numberOfLessons == 1) {
-      return getScore(getLetterGrade(lessonGrades[0].grade));
-    } else {
-      for (int i = 0; i < numberOfLessons; i++) {
-        sum += getScore(getLetterGrade(lessonGrades[i].grade));
-      }
-      return sum / numberOfLessons;
+
+    for (int i = 0; i < numberOfLessons; i++) {
+      sum += getScore(getLetterGrade(lessonGrades[i].grade));
     }
+    return sum / numberOfLessons;
   }
 
   String getStatus(String letterGrade) {
