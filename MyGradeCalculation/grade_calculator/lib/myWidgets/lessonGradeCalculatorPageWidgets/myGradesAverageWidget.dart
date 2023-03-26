@@ -12,6 +12,7 @@ class myGradesAverageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final text = '$_average';
     return Center(
       child: Container(
         margin: EdgeInsets.all(10),
@@ -26,7 +27,7 @@ class myGradesAverageWidget extends StatelessWidget {
               style: TextStyle(fontSize: 25.0),
             ),
             Text(
-              '$_average',
+              text.length > 4 ? '${text.substring(0, 4)}..' : text,
               style: const TextStyle(fontSize: 25.0),
             )
           ],

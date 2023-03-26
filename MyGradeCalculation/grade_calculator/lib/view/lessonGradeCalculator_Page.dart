@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../calculation/calculateTotalGrade.dart';
-import '../constants/constants.dart';
+import '../myWidgets/lessonGradeCalculatorPageWidgets/myGradesAverageWidget.dart';
 import '../myWidgets/lessonGradeCalculatorPageWidgets/myRecordButtonWidget.dart';
 import '../myWidgets/lessonGradeCalculatorPageWidgets/myStatWidget.dart';
 import 'calculation_page.dart';
@@ -178,27 +178,7 @@ class _LessonGradeCalculatorState extends State<LessonGradeCalculator> {
                 },
               ),
             ),
-            Center(
-              child: Container(
-                margin: EdgeInsets.all(10),
-                alignment: Alignment.center,
-                width: double.infinity,
-                decoration: MyBoxDecoration(),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Dönem Ortalaman: ',
-                      style: TextStyle(fontSize: 25.0),
-                    ),
-                    Text(
-                      '$_average',
-                      style: const TextStyle(fontSize: 25.0),
-                    )
-                  ],
-                ),
-              ),
-            ),
+            myGradesAverageWidget(average: _average),
             myRecordButtonWidget(
                 uid: uid, selectedTerm: _selectedTerm, average: _average),
           ],

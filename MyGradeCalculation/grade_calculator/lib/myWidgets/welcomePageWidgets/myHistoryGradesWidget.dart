@@ -38,7 +38,7 @@ class myHistoryGradesWidget extends StatelessWidget {
                   style: kMetinStily,
                 ),
                 const Divider(height: 20),
-                for (int i = 1; i < data.length + 1; i++)
+                for (int i = 1; i <= data.length; i++)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -91,12 +91,28 @@ class myHistoryGradesWidget extends StatelessWidget {
                               color: Colors.white,
                             ),
                             onPressed: () async {
+                              // Get the current data in the document
+                              final doc = await FirebaseFirestore.instance
+                                  .collection('Users')
+                                  .doc(uid)
+                                  .get();
+                              final data = doc.data() as Map<String, dynamic>;
+
+                              // Remove the item at index i from the list
+                              data.remove('$i');
+
+                              // Update the indices of the remaining items
+                              for (int j = i + 1; j <= data.length + 1; j++) {
+                                final item = data['$j'];
+                                data['${j - 1}'] = item;
+                                data.remove('$j');
+                              }
+
+                              // Update the document with the new data
                               await FirebaseFirestore.instance
                                   .collection('Users')
-                                  .doc('$uid')
-                                  .update({
-                                '$i': FieldValue.delete(),
-                              });
+                                  .doc(uid)
+                                  .set(data);
                             },
                           ),
                         ),

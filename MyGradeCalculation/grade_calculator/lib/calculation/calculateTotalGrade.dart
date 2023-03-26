@@ -2,19 +2,19 @@ class CalculateTotal {
   String getLetterGrade(double grade) {
     if (grade >= 90) {
       return 'AA';
-    } else if (grade >= 80) {
+    } else if (grade >= 85) {
       return 'BA';
     } else if (grade >= 75) {
       return 'BB';
-    } else if (grade >= 70) {
+    } else if (grade >= 65) {
       return 'CB';
     } else if (grade >= 60) {
       return 'CC';
     } else if (grade >= 50) {
       return 'DC';
-    } else if (grade >= 40) {
+    } else if (grade >= 45) {
       return 'DD';
-    } else if (grade >= 30) {
+    } else if (grade >= 40) {
       return 'FD';
     } else {
       return 'FF';
